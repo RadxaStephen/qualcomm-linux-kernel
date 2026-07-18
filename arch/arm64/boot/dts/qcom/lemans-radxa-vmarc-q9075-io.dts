@@ -1,0 +1,268 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Copyright (c) 2024, 2025, Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2026 Radxa Computer (Shenzhen) Co., Ltd.
+ */
+/dts-v1/;
+
+#include "lemans-radxa-vmarc-q9075.dtsi"
+
+/ {
+	model = "Radxa VMARC-Q9075 IO";
+	compatible = "radxa,vmarc-q9075-io", "radxa,vmarc-q9075", "qcom,qcs9075", "qcom,sa8775p";
+
+	vdd_sys_in: vdd-sys-in-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vdd_sys_in";
+		regulator-min-microvolt = <12000000>;
+		regulator-max-microvolt = <12000000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	vcc_usb_hub: vcc-usb-hub-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_usb_hub";
+		enable-active-high;
+		gpio = <&pmm8654au_2_gpios 5 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pme_gpio_5_usb2_pwer_en>;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-boot-on;
+		regulator-always-on;
+		vin-supply = <&vdd_sys_in>;
+	};
+
+	vcc_usb: vcc-usb-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_usb";
+		enable-active-high;
+		gpio = <&pmm8654au_2_gpios 6 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pme_gpio_6_usb3_pwr_en>;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-boot-on;
+		regulator-always-on;
+		vin-supply = <&vdd_sys_in>;
+	};
+
+	vcc3v3_sys: vcc3v3-sys-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc3v3_sys";
+		gpio = <&pmm8654au_2_gpios 7 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pme_gpio_7_usb4_pwr_en>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+		vin-supply = <&vdd_sys_in>;
+	};
+
+	vcc_1v8: vcc-1v8-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_1v8";
+		gpio = <&tlmm 73 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio_73_en>;
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		regulator-boot-on;
+		regulator-always-on;
+		vin-supply = <&vdd_sys_in>;
+	};
+
+	usb20_5v: usb20-5v-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "usb20_5v";
+		gpio = <&pmm8654au_1_gpios 7 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		pinctrl-names = "default";
+		pinctrl-0 = <&usb20_5v_en>;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-boot-on;
+		regulator-always-on;
+		vin-supply = <&vcc_usb>;
+	};
+
+	vcc_3p3_ssd: vcc-3p3-ssd-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_3p3_ssd";
+		enable-active-high;
+		gpio = <&pmm8654au_2_gpios 3 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&vcc_3v3_ssd_en_state>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	vcc_3v3_key: vcc-3v3-key-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_3v3_key";
+		enable-active-high;
+		gpio = <&pmm8654au_1_gpios 9 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&vcc_3v3_key_en>;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	switch_to_ekey_usb: switch-to-ekey-usb-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "switch_to_ekey_usb";
+		enable-active-high;
+		gpio = <&pmm8654au_2_gpios 11 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&switch_to_ekey_usb_en>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	gpio_keys: gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-0 = <&gpio_keys_default>;
+		pinctrl-names = "default";
+
+		power-key {
+			label = "Power Off";
+			gpios = <&tlmm 97 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_POWER>;
+			wakeup-source;
+			debounce-interval = <30>;
+		};
+	};
+};
+
+&i2c1 {
+	qcom,load-firmware;
+	qcom,xfer-mode = <1>;
+	status = "okay";
+
+	pca: pca@55 {
+		compatible = "nxp,pca9685-pwm";
+		#pwm-cells = <2>;
+		reg = <0x55>;
+	};
+};
+
+&i2c7 {
+	qcom,load-firmware;
+	qcom,xfer-mode = <1>;
+	pinctrl-0 = <&qup_i2c7_default>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	/* RTC RS4C411ZAE */
+	rtc_m41t11: rtc-m41t11@68 {
+		compatible = "st,m41t11";
+		reg = <0x68>;
+	};
+};
+
+&uart9 {
+	qcom,load-firmware;
+	qcom,xfer-mode = <1>;
+	pinctrl-0 = <&qup_uart9_tx>, <&qup_uart9_rx>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&uart12 {
+	qcom,load-firmware;
+	qcom,xfer-mode = <1>;
+	pinctrl-0 = <&qup_uart12_tx>,  <&qup_uart12_rx>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&uart17 {
+	qcom,load-firmware;
+	qcom,xfer-mode = <1>;
+	pinctrl-0 = <&qup_uart17_rts>, <&qup_uart17_tx>, <&qup_uart17_rx>;
+	pinctrl-names = "default";
+	status = "okay";
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-active-low;
+};
+
+&pmm8654au_1_gpios {
+
+	usb20_5v_en: usb20-5v-en-state {
+		pins = "gpio7";
+		function = "normal";
+		output-high;
+		bias-pull-up;
+	};
+
+	vcc_3v3_key_en: vcc-3v3-key-en-state {
+		pins = "gpio9";
+		function = "normal";
+		output-high;
+		bias-pull-up;
+	};
+};
+
+&pmm8654au_2_gpios {
+
+	vcc_3v3_ssd_en_state: vcc-3v3-ssd-en-state {
+		pins = "gpio3";
+		function = "normal";
+		output-high;
+		bias-pull-up;
+	};
+
+	pme_gpio_5_usb2_pwer_en: pme-gpio-5-usb2-pwr-en-state {
+		pins = "gpio5";
+		function = "normal";
+		output-high;
+		bias-pull-up;
+	};
+
+	pme_gpio_6_usb3_pwr_en: pme-gpio-6-usb3-pwr-en-state {
+		pins = "gpio6";
+		function = "normal";
+		output-high;
+		bias-pull-up;
+	};
+
+	pme_gpio_7_usb4_pwr_en: pme-gpio-7-usb4-pwr-en-state {
+		pins = "gpio7";
+		function = "normal";
+		output-high;
+		bias-pull-up;
+	};
+
+	switch_to_ekey_usb_en: switch-to-ekey-usb-en-state {
+		pins = "gpio11";
+		function = "normal";
+		output-high;
+		bias-pull-high;
+	};
+};
+
+&tlmm {
+
+	gpio_keys_default: gpio-keys-default-state {
+		pins = "gpio97";
+		function = "gpio";
+		drive-strength = <2>;
+		bias-pull-up;
+	};
+
+	gpio_73_en: gpio-73-en-state {
+		pins = "gpio73";
+		function = "gpio";
+		output-high;
+		bias-pull-up;
+	};
+};
+

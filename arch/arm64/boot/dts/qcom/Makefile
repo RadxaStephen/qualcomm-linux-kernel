@@ -64,6 +64,11 @@ dtb-$(CONFIG_ARCH_QCOM)	+= lemans-radxa-airbox-q900.dtb
 lemans-radxa-airbox-q900-el2-dtbs := lemans-radxa-airbox-q900.dtb lemans-el2.dtbo
 dtb-$(CONFIG_ARCH_QCOM)	+= lemans-radxa-airbox-q900-el2.dtb
 
+dtb-$(CONFIG_ARCH_QCOM)	+= lemans-radxa-vmarc-q9075-io.dtb
+
+lemans-radxa-vmarc-q9075-io-el2-dtbs := lemans-radxa-vmarc-q9075-io.dtb lemans-el2.dtbo
+dtb-$(CONFIG_ARCH_QCOM)	+= lemans-radxa-vmarc-q9075-io-el2.dtb
+
 dtb-$(CONFIG_ARCH_QCOM)	+= monaco-ac-evk.dtb
 dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
 
