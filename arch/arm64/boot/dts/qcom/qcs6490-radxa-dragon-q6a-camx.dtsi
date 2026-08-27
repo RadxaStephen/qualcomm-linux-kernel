@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Copyright (c) 2026 Radxa Computer (Shenzhen) Co., Ltd.
+ */
+
+#include <dt-bindings/clock/qcom,gcc-sc7280.h>
+#include <dt-bindings/clock/qcom,camcc-sc7280.h>
+#include <dt-bindings/interconnect/qcom,sc7280.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/power/qcom-rpmpd.h>
+
+#include "qcs6490-camera.dtsi"
+#include "qcs6490-radxa-dragon-q6a-camera-sensor.dtsi"
+
+&camss {
+	status = "disabled";
+};
+
+&cci1 {
+	status = "disabled";
+};
